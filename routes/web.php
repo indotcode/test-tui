@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\News\NewsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +16,19 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::middleware(['auth'])->group(function (){
+    Route::get('/dashboard', function () {
+        return view('dashboard.home');
+    })->name('dashboard');
+
+    Route::get('/dashboard/news', [NewsController::class, 'index'])->name('dashboard.news');
+    Route::middleware(['role:editor', 'role:admin'])->group(function (){
+        Route::get('/dashboard/news-create', [NewsController::class, 'create'])->name('dashboard.news.create');
+        Route::post('/dashboard/news-create', [NewsController::class, 'store'])->name('dashboard.news.store');
+    });
+
+});
+
+
+require __DIR__.'/auth.php';

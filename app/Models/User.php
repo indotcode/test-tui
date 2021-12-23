@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'id_role',
     ];
 
     /**
@@ -41,4 +42,36 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function roles(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Role::class, 'id', 'id_role');
+    }
+
+    /**
+     * @param $role_key
+     * @return bool
+     */
+    public function hasRole($role_key): bool
+    {
+        if ($this->roles->key === $role_key) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param array $role_result
+     * @return bool
+     */
+    public function hasRoleRes(array $role_result = []): bool
+    {
+        if (count($role_result) !== 0 && in_array($this->roles->key, $role_result)) {
+            return true;
+        }
+        return false;
+    }
 }
